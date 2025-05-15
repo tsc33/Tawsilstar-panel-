@@ -1,0 +1,73 @@
+import { useState } from "react"; import { Card, CardContent } from "@/components/ui/card"; import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"; import { Select, SelectItem } from "@/components/ui/select"; import { motion } from "framer-motion";
+
+const roles = [ "مشرف", "مكتب", "مشرف عام", "قسم الاتصال", "قسم الوجستية", "قسم التكنولوجيا والتطوير", "قسم آخر" ];
+
+export default function AdminPanel() { const [isLoggedIn, setIsLoggedIn] = useState(false); const [login, setLogin] = useState({ username: "", password: "" });
+
+const [admins, setAdmins] = useState([]); const [form, setForm] = useState({ name: "", wilaya: "", role: roles[0], phone: "", email: "", address: "" }); const [search, setSearch] = useState("");
+
+const addAdmin = () => { setAdmins([...admins, form]); setForm({ name: "", wilaya: "", role: roles[0], phone: "", email: "", address: "" }); };
+
+const deleteAdmin = (index) => { setAdmins(admins.filter((_, i) => i !== index)); };
+
+const filteredAdmins = admins.filter(admin => admin.name.includes(search) || admin.wilaya.includes(search) || admin.role.includes(search) );
+
+const handleLogin = () => { if (login.username === "tawsil star" && login.password === "T@ws!lS7@r2025") { setIsLoggedIn(true); } else { alert("بيانات الدخول غير صحيحة"); } };
+
+if (!isLoggedIn) { return ( <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-300 to-blue-600 text-white"> <h1 className="text-3xl font-bold mb-4">لوحة تحكم Tawsil Star</h1> <Card className="bg-white text-black p-6 shadow-lg rounded-xl"> <CardContent className="space-y-2"> <Input placeholder="اسم المستخدم" value={login.username} onChange={e => setLogin({ ...login, username: e.target.value })} /> <Input type="password" placeholder="كلمة السر" value={login.password} onChange={e => setLogin({ ...login, password: e.target.value })} /> <Button onClick={handleLogin} className="w-full">تسجيل الدخول</Button> </CardContent> </Card> </div> ); }
+
+return ( <div className="p-4 space-y-6 bg-gray-100 min-h-screen bg-[url('/images/delivery-bg.jpg')] bg-cover"> <motion.h1 className="text-3xl font-bold text-center text-white drop-shadow-lg">لوحة إدارة Tawsil Star</motion.h1>
+
+<Card className="bg-white bg-opacity-90">
+    <CardContent className="space-y-2">
+      <h2 className="text-xl font-bold">إضافة مشرف أو مساعد</h2>
+      <Input placeholder="الاسم الكامل" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+      <Input placeholder="الولاية" value={form.wilaya} onChange={e => setForm({ ...form, wilaya: e.target.value })} />
+      <Select value={form.role} onValueChange={value => setForm({ ...form, role: value })}>
+        {roles.map((role, idx) => <SelectItem key={idx} value={role}>{role}</SelectItem>)}
+      </Select>
+      <Input placeholder="رقم الهاتف" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+      <Input placeholder="البريد الإلكتروني" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+      <Input placeholder="العنوان" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
+      <Button onClick={addAdmin}>إضافة</Button>
+    </CardContent>
+  </Card>
+
+  <Card className="bg-white bg-opacity-90">
+    <CardContent>
+      <h2 className="text-xl font-bold mb-2">قائمة المشرفين</h2>
+      <Input placeholder="بحث باسم أو ولاية أو مهنة..." value={search} onChange={e => setSearch(e.target.value)} className="mb-3" />
+      <table className="w-full border">
+        <thead>
+          <tr className="bg-gray-100">
+            <th>الاسم</th>
+            <th>الولاية</th>
+            <th>المهنة</th>
+            <th>رقم الهاتف</th>
+            <th>البريد الإلكتروني</th>
+            <th>العنوان</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredAdmins.map((admin, index) => (
+            <tr key={index} className="border-t">
+              <td>{admin.name}</td>
+              <td>{admin.wilaya}</td>
+              <td>{admin.role}</td>
+              <td>{admin.phone}</td>
+              <td>{admin.email}</td>
+              <td>{admin.address}</td>
+              <td>
+                <Button variant="destructive" onClick={() => deleteAdmin(index)}>حذف</Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CardContent>
+  </Card>
+</div>
+
+); }
+
