@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>Tawsil Star Admin</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, sans-serif;
+      background: linear-gradient(to right, #2193b0, #6dd5ed);
+      color: white;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      color: black;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      margin: 5px;
+      padding: 10px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const root = document.getElementById('root');
+    let isLoggedIn = false;
+    let username = '';
+    let password = '';
+    const admins = [];
+
+    function renderLogin() {
+      root.innerHTML = `
+        <div class="card">
+          <h2>تسجيل الدخول</h2>
+          <input placeholder="اسم المستخدم" id="login-username">
+          <input placeholder="كلمة المرور" id="login-password" type="password">
+          <button onclick="handleLogin()">دخول</button>
+        </div>
+      `;
+    }
+
+    function handleLogin() {
+      username = document.getElementById('login-username').value;
+      password = document.getElementById('login-password').value;
+      if (username === 'tawsil star' && password === 'T@ws!lS7@r2025') {
+        isLoggedIn = true;
+        renderApp();
+      } else {
+        alert('بيانات الدخول غير صحيحة');
+      }
+    }
+
+    function renderApp() {
+      root.innerHTML = \`
+        <div class="card">
+          <h2>إضافة مشرف</h2>
+          <input id="name" placeholder="الاسم الكامل" />
+          <input id="wilaya" placeholder="الولاية" />
+          <select id="role">
+            <option>مشرف</option>
+            <option>مكتب</option>
+            <option>مشرف عام</option>
+            <option>قسم الاتصال</option>
+            <option>قسم الوجستية</option>
+            <option>قسم التكنولوجيا والتطوير</option>
+            <option>قسم آخر</option>
+          </select>
+          <input id="phone" placeholder="رقم الهاتف" />
+          <input id="email" placeholder="البريد الإلكتروني" />
+          <input id="address" placeholder="العنوان" />
+          <button onclick="addAdmin()">إضافة</button>
+        </div>
+        <div class="card">
+          <h2>قائمة المشرفين</h2>
+          <input id="search" placeholder="بحث..." oninput="renderAdminList()" />
+          <table>
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>الولاية</th>
+                <th>المهنة</th>
+                <th>الهاتف</th>
+                <th>البريد</th>
+                <th>العنوان</th>
+                <th>حذف</th>
+              </tr>
+            </thead>
+            <tbody id="admin-list"></tbody>
+          </table>
+        </div>
+      \`;
+      renderAdminList();
+    }
+
+    function addAdmin() {
+      const admin = {
+        name: document.getElementById('name').value,
+        wilaya: document.getElementById('wilaya').value,
+        role: document.getElementById('role').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+      };
+      admins.push(admin);
+      renderAdminList();
+    }
+
+    function deleteAdmin(index) {
+      admins.splice(index, 1);
+      renderAdminList();
+    }
+
+    function renderAdminList() {
+      const keyword = document.getElementById('search')?.value || '';
+      const filtered = admins.filter(a => Object.values(a).some(v => v.includes(keyword)));
+      const list = document.getElementById('admin-list');
+      if (!list) return;
+      list.innerHTML = filtered.map((admin, index) => \`
+        <tr>
+          <td>\${admin.name}</td>
+          <td>\${admin.wilaya}</td>
+          <td>\${admin.role}</td>
+          <td>\${admin.phone}</td>
+          <td>\${admin.email}</td>
+          <td>\${admin.address}</td>
+          <td><button onclick="deleteAdmin(\${index})">حذف</button></td>
+        </tr>
+      \`).join('');
+    }
+
+    renderLogin();
+  </script>
+</body>
+</html>
